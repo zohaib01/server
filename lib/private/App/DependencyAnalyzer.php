@@ -53,7 +53,7 @@ class DependencyAnalyzer {
 	 * @param array $app
 	 * @returns array of missing dependencies
 	 */
-	public function analyze(array $app) {
+	public function analyze(array $app, bool $ignoreMax) {
 		$this->appInfo = $app;
 		if (isset($app['dependencies'])) {
 			$dependencies = $app['dependencies'];
@@ -67,7 +67,7 @@ class DependencyAnalyzer {
 			$this->analyzeCommands($dependencies),
 			$this->analyzeLibraries($dependencies),
 			$this->analyzeOS($dependencies),
-			$this->analyzeOC($dependencies, $app)
+			$this->analyzeOC($dependencies, $app, $ignoreMax)
 		);
 	}
 
@@ -293,7 +293,7 @@ class DependencyAnalyzer {
 	 * @param array $appInfo
 	 * @return array
 	 */
-	private function analyzeOC(array $dependencies, array $appInfo) {
+	private function analyzeOC(array $dependencies, array $appInfo, bool $ignoreMax) {
 		$missing = [];
 		$minVersion = null;
 		if (isset($dependencies['nextcloud']['@attributes']['min-version'])) {
@@ -319,7 +319,7 @@ class DependencyAnalyzer {
 				$missing[] = (string)$this->l->t('Server version %s or higher is required.', [$this->toVisibleVersion($minVersion)]);
 			}
 		}
-		if (!is_null($maxVersion)) {
+		if (!$ignoreMax && !is_null($maxVersion)) {
 			if ($this->compareBigger($this->platform->getOcVersion(), $maxVersion)) {
 				$missing[] = (string)$this->l->t('Server version %s or lower is required.', [$this->toVisibleVersion($maxVersion)]);
 			}
