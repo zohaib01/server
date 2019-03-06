@@ -29,6 +29,7 @@
 
 namespace OC\App;
 
+use OCP\IConfig;
 use OCP\IL10N;
 
 class DependencyAnalyzer {
@@ -69,6 +70,20 @@ class DependencyAnalyzer {
 			$this->analyzeOS($dependencies),
 			$this->analyzeOC($dependencies, $app, $ignoreMax)
 		);
+	}
+
+	public function isMarkedCompatible(array $app): bool {
+		if (isset($app['dependencies'])) {
+			$dependencies = $app['dependencies'];
+		} else {
+			$dependencies = [];
+		}
+
+		$maxVersion = $this->getMaxVersion($dependencies, $app);
+		if ($maxVersion === null) {
+			return true;
+		}
+		return !$this->compareBigger($this->platform->getOcVersion(), $maxVersion);
 	}
 
 	/**
@@ -305,14 +320,7 @@ class DependencyAnalyzer {
 		} elseif (isset($appInfo['require'])) {
 			$minVersion = $appInfo['require'];
 		}
-		$maxVersion = null;
-		if (isset($dependencies['nextcloud']['@attributes']['max-version'])) {
-			$maxVersion = $dependencies['nextcloud']['@attributes']['max-version'];
-		} elseif (isset($dependencies['owncloud']['@attributes']['max-version'])) {
-			$maxVersion = $dependencies['owncloud']['@attributes']['max-version'];
-		} elseif (isset($appInfo['requiremax'])) {
-			$maxVersion = $appInfo['requiremax'];
-		}
+		$maxVersion = $this->getMaxVersion($dependencies, $appInfo);
 
 		if (!is_null($minVersion)) {
 			if ($this->compareSmaller($this->platform->getOcVersion(), $minVersion)) {
@@ -325,6 +333,20 @@ class DependencyAnalyzer {
 			}
 		}
 		return $missing;
+	}
+
+	private function getMaxVersion(array $dependencies, array $appInfo): ?string {
+		if (isset($dependencies['nextcloud']['@attributes']['max-version'])) {
+			return $dependencies['nextcloud']['@attributes']['max-version'];
+		}
+		if (isset($dependencies['owncloud']['@attributes']['max-version'])) {
+			return $dependencies['owncloud']['@attributes']['max-version'];
+		}
+		if (isset($appInfo['requiremax'])) {
+			return $appInfo['requiremax'];
+		}
+
+		return null;
 	}
 
 	/**
