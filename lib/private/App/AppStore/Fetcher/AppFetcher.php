@@ -125,7 +125,7 @@ class AppFetcher extends Fetcher {
 				}
 			}
 			if(!$compatible) {
-				unset($response['data'][$dataKey]);
+				//unset($response['data'][$dataKey]);
 			}
 		}
 
@@ -136,10 +136,7 @@ class AppFetcher extends Fetcher {
 	private function setEndpoint() {
 		$versionArray = explode('.', $this->getVersion());
 		$this->endpointUrl = sprintf(
-			'https://apps.nextcloud.com/api/v1/platform/%d.%d.%d/apps.json',
-			$versionArray[0],
-			$versionArray[1],
-			$versionArray[2]
+			'https://apps.nextcloud.com/api/v1/platform/15.0.0/apps.json'
 		);
 	}
 
