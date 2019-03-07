@@ -54,8 +54,8 @@
 			<input v-if="app.update" class="update primary" type="button" :value="t('settings', 'Update to {update}', {update:app.update})" v-on:click.stop="update(app.id)" :disabled="installing || loading(app.id)" />
 			<input v-if="app.canUnInstall" class="uninstall" type="button" :value="t('settings', 'Remove')" v-on:click.stop="remove(app.id)" :disabled="installing || loading(app.id)" />
 			<input v-if="app.active" class="enable" type="button" :value="t('settings','Disable')" v-on:click.stop="disable(app.id)" :disabled="installing || loading(app.id)" />
-			<input v-if="!app.active && app.isCompatible" class="enable" type="button" :value="enableButtonText" v-on:click.stop="enable(app.id)" v-tooltip.auto="enableButtonTooltip" :disabled="!app.canInstall || installing || loading(app.id)" />
-			<input v-else-if="!app.active" class="enable" type="button" :value="forceEnableButtonText" v-on:click.stop="enable(app.id)" v-tooltip.auto="forceEnableButtonTooltip" :disabled="installing || loading(app.id)" />
+			<input v-if="!app.active && (app.canInstall || app.isCompatible)" class="enable" type="button" :value="enableButtonText" v-on:click.stop="enable(app.id)" v-tooltip.auto="enableButtonTooltip" :disabled="!app.canInstall || installing || loading(app.id)" />
+			<input v-else-if="!app.active" class="enable" type="button" :value="forceEnableButtonText" v-on:click.stop="forceEnable(app.id)" v-tooltip.auto="forceEnableButtonTooltip" :disabled="installing || loading(app.id)" />
 		</div>
 	</div>
 </template>

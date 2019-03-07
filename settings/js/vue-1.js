@@ -806,6 +806,16 @@ __webpack_require__.r(__webpack_exports__);
         groups: currentGroups
       });
     },
+    forceEnable: function forceEnable(appId) {
+      this.$store.dispatch('forceEnableApp', {
+        appId: appId,
+        groups: []
+      }).then(function (response) {
+        OC.Settings.Apps.rebuildNavigation();
+      }).catch(function (error) {
+        OC.Notification.show(error);
+      });
+    },
     enable: function enable(appId) {
       this.$store.dispatch('enableApp', {
         appId: appId,
@@ -1405,7 +1415,7 @@ var render = function() {
               })
             : _vm._e(),
           _vm._v(" "),
-          !_vm.app.active && _vm.app.isCompatible
+          !_vm.app.active && (_vm.app.canInstall || _vm.app.isCompatible)
             ? _c("input", {
                 directives: [
                   {
@@ -1450,7 +1460,7 @@ var render = function() {
                 },
                 on: {
                   click: function($event) {
-                    return _vm.enable(_vm.app.id)
+                    return _vm.forceEnable(_vm.app.id)
                   }
                 }
               })
@@ -2109,7 +2119,7 @@ var render = function() {
             })
           : _vm._e(),
         _vm._v(" "),
-        !_vm.app.active && _vm.app.isCompatible
+        !_vm.app.active && (_vm.app.canInstall || _vm.app.isCompatible)
           ? _c("input", {
               directives: [
                 {
@@ -2156,7 +2166,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.stopPropagation()
-                  return _vm.enable(_vm.app.id)
+                  return _vm.forceEnable(_vm.app.id)
                 }
               }
             })

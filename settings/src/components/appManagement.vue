@@ -103,6 +103,11 @@
 				}
 				this.$store.dispatch('enableApp', { appId: this.app.id, groups: currentGroups});
 			},
+			forceEnable(appId) {
+				this.$store.dispatch('forceEnableApp', { appId: appId, groups: [] })
+					.then((response) => { OC.Settings.Apps.rebuildNavigation(); })
+					.catch((error) => { OC.Notification.show(error)});
+			},
 			enable(appId) {
 				this.$store.dispatch('enableApp', { appId: appId, groups: [] })
 					.then((response) => { OC.Settings.Apps.rebuildNavigation(); })
