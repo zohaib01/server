@@ -115,6 +115,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -563,6 +564,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -730,12 +732,28 @@ __webpack_require__.r(__webpack_exports__);
 
       return t('settings', 'Enable');
     },
+    forceEnableButtonText: function forceEnableButtonText() {
+      if (this.app.needsDownload) {
+        return t('settings', 'Download and force enable');
+      }
+
+      return t('settings', 'Force enable');
+    },
     enableButtonTooltip: function enableButtonTooltip() {
       if (this.app.needsDownload) {
         return t('settings', 'The app will be downloaded from the app store');
       }
 
       return false;
+    },
+    forceEnableButtonTooltip: function forceEnableButtonTooltip() {
+      var base = t('settings', 'This app is not marked as compatible with your Nextcloud version. If you continue you will still be able to install the app. Note that the app might not work as expected.');
+
+      if (this.app.needsDownload) {
+        return base + ' ' + t('settings', 'The app will be downloaded from the app store');
+      }
+
+      return base;
     }
   },
   methods: {
@@ -1387,7 +1405,7 @@ var render = function() {
               })
             : _vm._e(),
           _vm._v(" "),
-          !_vm.app.active
+          !_vm.app.active && _vm.app.isCompatible
             ? _c("input", {
                 directives: [
                   {
@@ -1406,6 +1424,29 @@ var render = function() {
                     !_vm.app.canInstall ||
                     _vm.installing ||
                     _vm.loading(_vm.app.id)
+                },
+                on: {
+                  click: function($event) {
+                    return _vm.enable(_vm.app.id)
+                  }
+                }
+              })
+            : !_vm.app.active
+            ? _c("input", {
+                directives: [
+                  {
+                    name: "tooltip",
+                    rawName: "v-tooltip.auto",
+                    value: _vm.forceEnableButtonTooltip,
+                    expression: "forceEnableButtonTooltip",
+                    modifiers: { auto: true }
+                  }
+                ],
+                staticClass: "enable primary",
+                attrs: {
+                  type: "button",
+                  value: _vm.forceEnableButtonText,
+                  disabled: _vm.installing || _vm.loading(_vm.app.id)
                 },
                 on: {
                   click: function($event) {
@@ -2068,7 +2109,7 @@ var render = function() {
             })
           : _vm._e(),
         _vm._v(" "),
-        !_vm.app.active
+        !_vm.app.active && _vm.app.isCompatible
           ? _c("input", {
               directives: [
                 {
@@ -2087,6 +2128,30 @@ var render = function() {
                   !_vm.app.canInstall ||
                   _vm.installing ||
                   _vm.loading(_vm.app.id)
+              },
+              on: {
+                click: function($event) {
+                  $event.stopPropagation()
+                  return _vm.enable(_vm.app.id)
+                }
+              }
+            })
+          : !_vm.app.active
+          ? _c("input", {
+              directives: [
+                {
+                  name: "tooltip",
+                  rawName: "v-tooltip.auto",
+                  value: _vm.forceEnableButtonTooltip,
+                  expression: "forceEnableButtonTooltip",
+                  modifiers: { auto: true }
+                }
+              ],
+              staticClass: "enable",
+              attrs: {
+                type: "button",
+                value: _vm.forceEnableButtonText,
+                disabled: _vm.installing || _vm.loading(_vm.app.id)
               },
               on: {
                 click: function($event) {
